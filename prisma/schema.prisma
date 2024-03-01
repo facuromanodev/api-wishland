@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id                         Int      @id @default(autoincrement())
+  username                   String   @unique(map: "User_username_key")
+  password                   String
+  name                       String
+  lastName                   String
+  tel                        String   @unique(map: "User_tel_key")
+  email                      String   @unique(map: "User_email_key")
+  wallet                     String?
+  createdAt                  DateTime @default(now())
+  acceptedTermsAndConditions Int      @db.TinyInt
+  bannerImage                String?  @db.VarChar(105)
+  profileImage               String?  @db.VarChar(105)
+  wish                       wish[]
+}
+
+model wish {
+  id       Int    @id @unique(map: "Wish_id_key") @default(autoincrement())
+  routeImg String
+  price    String
+  userId   Int
+  title    String @db.VarChar(105)
+  user     user   @relation(fields: [userId], references: [id], map: "Wish_userId_fkey")
+
+  @@index([userId], map: "Wish_userId_fkey")
+}
